@@ -1,0 +1,13 @@
+{
+  "name": "performancer/routing",
+  "description": "A minimal router to direct traffic",
+  "type": "library",
+  "require": {
+    "php": ">=8.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "Routing\\": "src/"
+    }
+  }
+}
