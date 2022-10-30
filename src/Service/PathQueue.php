@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Routing\Helper;
+namespace Routing\Service;
 
 final class PathQueue
 {
@@ -11,20 +11,17 @@ final class PathQueue
     ) {
     }
 
-    public static function fromPath(string $path): PathQueue
-    {
-        if (str_starts_with($path, '/')) {
-            $path = substr($path, 1);
-        }
-
-        return new PathQueue(explode('/', $path));
-    }
-
+    /**
+     * Returns the first cell on the queue
+     */
     public function front(): string
     {
         return $this->parts[0] ?? '';
     }
 
+    /**
+     * Returns a new instance of the queue without the first cell
+     */
     public function pop(): self
     {
         $parts = $this->parts;

@@ -1,6 +1,6 @@
 # routing
 
-A minimal router to direct traffic
+A routing system that can also parse url parameters
 
 ## Usage
 
@@ -9,29 +9,24 @@ Create a path with parameter and match it and execute a function once it's route
 ```php
 <?php
 
-use Routing\Contract\ResponseInterface;
-use Routing\Parameter\ParameterParser;
+use Routing\Contract\RequestHandler;
+use Routing\Contract\Response as ResponseInterface;
 use Routing\Request;
 use Routing\Response\Response;
 use Routing\Route;
 use Routing\Router;
 
-function controller(Request $request): ResponseInterface
-{
-    $id = $request->params('id');
-    return new Response(sprintf('Hey, we found item with id %s', $id), 200);
-}
+$handler = new class implements RequestHandler {
+    public function handle(Request $request): ResponseInterface
+    {
+        $id = $request->params('id');
+        return new Response(sprintf('Hey, we found item with id %s', $id), 200);
+    }
+};
 
-$router = new Router(new ParameterParser());
-$router->add(new Route('/item/{id<\d+>}', fn (Request $request) => controller($request)));
-$request = new Request(
-    $_SERVER['REMOTE_ADDR'],
-    $_SERVER['REQUEST_URI'],
-    $_SERVER['REQUEST_METHOD'],
-    $_SERVER['CONTENT_TYPE'],
-);
-$response = $router->handle($request);
-$response->send();
+$router = new Router;
+$router->add(new Route('/item/{id<\d+>}', $handler));
+$router->handle(new Request('/item/42'))->send();
 ```
 
 TIP #1: You may handle RoutingExceptions with your custom _page not found_ response.

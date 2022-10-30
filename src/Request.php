@@ -4,19 +4,22 @@ declare(strict_types=1);
 
 namespace Routing;
 
-use Routing\Parameter\Parameters;
+use Routing\Service\PathExploder;
+use Routing\Service\PathQueue;
 
-class Request
+final class Request
 {
-    private Parameters $params;
+    /** @var array<string, string> */
+    private array $params;
+    private PathQueue $pathQueue;
 
     public function __construct(
-        private readonly string $remote,
         private readonly string $path,
-        private readonly string $method,
-        private readonly string $contentType,
+        private readonly string $remote = '',
+        private readonly string $method = '',
+        private readonly string $contentType = '',
     ) {
-        $this->params = new Parameters();
+        $this->pathQueue = new PathQueue(PathExploder::explode($path));
     }
 
     public function remoteAddress(): string
@@ -35,19 +38,6 @@ class Request
         return $path;
     }
 
-    public function params(string $key): string
-    {
-        return $this->params->get($key);
-    }
-
-    public function withParams(Parameters $params): self
-    {
-        $clone = clone $this;
-        $clone->params = $params;
-
-        return $clone;
-    }
-
     public function method(): string
     {
         return $this->method;
@@ -62,5 +52,31 @@ class Request
         }
 
         return [];
+    }
+
+    public function params(string $key): string
+    {
+        return $this->params[$key];
+    }
+
+    public function withParams(string $key, string $value): self
+    {
+        $clone = clone $this;
+        $clone->params[$key] = $value;
+
+        return $clone;
+    }
+
+    public function pathQueue(): PathQueue
+    {
+        return $this->pathQueue;
+    }
+
+    public function withPathQueue(PathQueue $queue): self
+    {
+        $clone = clone $this;
+        $clone->pathQueue = $queue;
+
+        return $clone;
     }
 }

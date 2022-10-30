@@ -4,37 +4,23 @@ declare(strict_types=1);
 
 namespace Routing;
 
-use Closure;
+use Routing\Contract\RequestHandler;
 
-class Route
+final class Route
 {
     public function __construct(
-        private readonly string $route,
-        private readonly Closure $closure,
+        private readonly string $path,
+        private readonly RequestHandler $handler,
     ) {
     }
 
-    public function route(): array
+    public function path(): string
     {
-        $route = $this->route;
-
-        if (str_starts_with($route, '/')) {
-            $route = substr($route, 1);
-        }
-
-        if (str_ends_with($route, '/')) {
-            $route = substr($route, 0, -1);
-        }
-
-        if ($route !== '') {
-            return explode('/', $route);
-        }
-
-        return [];
+        return $this->path;
     }
 
-    public function getClosure(): Closure
+    public function handler(): RequestHandler
     {
-        return $this->closure;
+        return $this->handler;
     }
 }

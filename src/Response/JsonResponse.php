@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Routing\Response;
 
-use Routing\Contract\ResponseInterface;
+use Routing\Contract\Response as ResponseInterface;
 
 final class JsonResponse implements ResponseInterface
 {

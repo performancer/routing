@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-use Routing\Contract\ResponseInterface;
-use Routing\Parameter\ParameterParser;
+use Routing\Contract\RequestHandler;
+use Routing\Contract\Response as ResponseInterface;
 use Routing\Request;
+use Routing\RequestHandler\Router;
 use Routing\Response\Response;
 use Routing\Route;
-use Routing\Router;
 
-function controller(Request $request): ResponseInterface
-{
-    $id = $request->params('id');
-    return new Response(sprintf('Hey, we found item with id %s', $id), 200);
-}
+$handler = new class implements RequestHandler {
+    public function handle(Request $request): ResponseInterface
+    {
+        $id = $request->params('id');
+        return new Response(sprintf('Hey, we found item with id %s', $id), 200);
+    }
+};
 
-$router = new Router(new ParameterParser());
-$router->add(new Route('/item/{id<\d+>}', fn (Request $request) => controller($request)));
-$request = new Request('127.0.0.1', '/item/42', 'GET', '');
-$response = $router->handle($request);
-$response->send();
+$router = new Router;
+$router->add(new Route('/item/{id<\d+>}', $handler));
+$router->handle(new Request('/item/42'))->send();

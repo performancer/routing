@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Routing\Contract;
 
-interface ResponseInterface
+interface Response
 {
     public function send(): void;
 }

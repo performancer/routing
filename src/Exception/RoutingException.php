@@ -6,6 +6,6 @@ namespace Routing\Exception;
 
 use Exception;
 
-class RoutingException extends Exception
+final class RoutingException extends Exception
 {
 }
